@@ -1,26 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {IUser} from "./types/types";
+import ViewTable from "./components/View/ViewTable/ViewTable";
+import {EditPanel} from "./components/Edit/EditPanel/EditPanel";
+import {Container, Grid} from "@mui/material";
+
+const users: IUser[] = [
+    {id: 1, name: 'India', position: 'IN', birthdate: Date.now(), sex: 'male', fired: false},
+    {id: 2, name: 'China', position: 'CN', birthdate: 1403500365, sex: 'male', fired: false},
+];
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+
+    return (
+        <div className="App">
+            <Container maxWidth={'xl'}>
+                <Grid container spacing={2}>
+                    <Grid item sm={7}>
+                        <ViewTable users={users}/>
+                    </Grid>
+                    <Grid item sm={5}>
+                        <EditPanel users={users}/>
+                    </Grid>
+                </Grid>
+            </Container>
+        </div>
+    );
 }
 
 export default App;
