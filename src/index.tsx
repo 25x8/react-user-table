@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import mockDB from "./mock/MockDB";
 
+mockDB.initDB();
 
 ReactDOM.render(
   <React.StrictMode>

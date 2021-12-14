@@ -8,9 +8,14 @@ export interface IColumn {
 export interface IUser {
     id: any;
     name: string;
-    position: string;
+    position: number;
     birthdate: number;
     sex: 'male' | 'female';
     fired: boolean;
     colleagues?: IUser[]
+}
+
+export interface IPosition {
+    id: number;
+    value: string;
 }
