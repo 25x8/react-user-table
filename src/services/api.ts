@@ -1,4 +1,4 @@
-import {IPosition} from "../types/types";
+import {IPosition, IUser} from "../types/types";
 
 async function getData<T>(fn: any, timeout: number): Promise<T> {
     return new Promise<T>(resolve => {
@@ -10,8 +10,14 @@ async function getData<T>(fn: any, timeout: number): Promise<T> {
     });
 }
 
-export async function getPositions() {
+export async function getPositions(): Promise<IPosition[]> {
      return  await getData<IPosition[]>(() => {
             return JSON.parse(localStorage.getItem('positions') || '[]');
         }, 1000);
+}
+
+export async function getUsers(): Promise<IUser[]> {
+    return await getData<IUser[]>(() =>{
+            return JSON.parse(localStorage.getItem('users') || '[]');
+    }, 1000)
 }

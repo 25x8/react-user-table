@@ -16,17 +16,16 @@ import {
     SelectChangeEvent,
     Chip
 } from '@mui/material';
-import {IPosition, IUser} from "../../../types/types";
-import {getPositions} from "../../../services/api";
+import {IUser} from "../../../types/types";
+import {observer} from "mobx-react-lite";
+import {positionsStore} from "../../../store/Positions";
 
 
 interface EditPanelProps {
     users: IUser[];
 }
 
-export const EditPanel: FC<EditPanelProps> = ({users}) => {
-    const [positionsList, setPositionsList] = useState<IPosition[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+const EditPanel: FC<EditPanelProps> = ({users=[]}) => {
     const [position, setPosition] = useState<string>('');
     const [fired, setFired] = useState<boolean>(false);
     const [personName, setPersonName] = useState<string[]>([]);
@@ -40,33 +39,19 @@ export const EditPanel: FC<EditPanelProps> = ({users}) => {
     }
 
     useEffect(() => {
-        getPositionsList();
+        positionsStore.getPositions();
     }, []);
 
-    useEffect(() => {
-        positionsList.length > 0
-            ? setLoading(false)
-            : setLoading(true);
-    }, [positionsList])
-
-    async function getPositionsList() {
-        const posList = await getPositions();
-        setPositionsList(posList);
-    }
 
 
     const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-        const {
-            target: {value},
-        } = event;
-        setPersonName(
-            typeof value === 'string' ? value.split(',') : value,
-        );
+        const { target: {value},} = event;
+        setPersonName(typeof value === 'string' ? value.split(',') : value,);
     };
 
     return (
 
-        loading
+        positionsStore.isLoading
             ? <div>Загрузка...</div>
             : <Grid container rowSpacing={2}>
 
@@ -89,7 +74,7 @@ export const EditPanel: FC<EditPanelProps> = ({users}) => {
                             onChange={handleChangePosition}
                         >
                             {
-                                positionsList.map(position => <MenuItem key={position.id} value={position.id}>{position.value}</MenuItem>)
+                                positionsStore.list.map(position => <MenuItem key={position.id} value={position.id}>{position.value}</MenuItem>)
                             }
                         </Select>
                     </FormControl>
@@ -155,3 +140,5 @@ export const EditPanel: FC<EditPanelProps> = ({users}) => {
 
     )
 }
+
+export const EditPanelObserver = observer(EditPanel);

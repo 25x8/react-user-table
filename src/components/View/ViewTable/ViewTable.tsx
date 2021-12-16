@@ -9,6 +9,8 @@ import {
     TablePagination
 } from "@mui/material";
 import {IColumn, IUser} from "../../../types/types";
+import {observer} from "mobx-react-lite";
+import {positionsStore} from "../../../store/Positions";
 
 interface ViewTableProps {
     users: IUser[];
@@ -40,7 +42,7 @@ const columns: IColumn[] = [
 ];
 
 
-const ViewTable: FC<ViewTableProps> = ({users}) => {
+const ViewTable: FC<ViewTableProps> = ({users = []}) => {
 
     const [page, setPage] = useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -55,52 +57,61 @@ const ViewTable: FC<ViewTableProps> = ({users}) => {
     };
 
     return (
-        <>
-            <TableContainer sx={{maxHeight: 440}}>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            {columns.map((column) => (
-                                <TableCell
-                                    key={column.id}
-                                    align={column.align}
-                                >
-                                    {column.label}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {users
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row: IUser) => {
-                                return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                                        {columns.map((column) => {
-                                            const value: typeof column.id = column.id === 'birthdate' ? new Date(row[column.id]).toLocaleDateString() : row[column.id];
-                                            return (
-                                                <TableCell key={column.id} align={column.align}>
-                                                    {value}
-                                                </TableCell>
-                                            );
-                                        })}
-                                    </TableRow>
-                                );
-                            })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={users.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </>
+
+        positionsStore.isLoading
+            ? <div>Загрузка...</div>
+            : <>
+                <TableContainer sx={{maxHeight: 440}}>
+                    <Table stickyHeader aria-label="sticky table">
+                        <TableHead>
+                            <TableRow>
+                                {columns.map((column) => (
+                                    <TableCell
+                                        key={column.id}
+                                        align={column.align}
+                                    >
+                                        {column.label}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {users
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row: IUser) => {
+                                    return (
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                            {columns.map((column) => {
+                                                const value: typeof column.id = column.id === 'birthdate'
+                                                    ? new Date(row[column.id]).toLocaleDateString()
+                                                    : row[column.id];
+                                                return (
+                                                    <TableCell key={column.id} align={column.align}>
+                                                        {
+                                                            column.id === 'position'
+                                                                ? positionsStore.list.find(pos => pos.id === +value)?.value
+                                                                : value
+                                                        }
+                                                    </TableCell>
+                                                );
+                                            })}
+                                        </TableRow>
+                                    );
+                                })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[10, 25, 100]}
+                    component="div"
+                    count={users.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </>
     );
 };
 
-export default ViewTable;
+export const ViewTableObserver = observer(ViewTable);

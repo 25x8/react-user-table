@@ -1,7 +1,7 @@
 import React from 'react';
 import { IUser} from "./types/types";
-import ViewTable from "./components/View/ViewTable/ViewTable";
-import {EditPanel} from "./components/Edit/EditPanel/EditPanel";
+import  {ViewTableObserver} from "./components/View/ViewTable/ViewTable";
+import { EditPanelObserver} from "./components/Edit/EditPanel/EditPanel";
 import {Container, Grid} from "@mui/material";
 
 
@@ -16,10 +16,10 @@ function App() {
             <Container maxWidth={'xl'}>
                 <Grid container spacing={2}>
                     <Grid item sm={7}>
-                        <ViewTable users={users}/>
+                        <ViewTableObserver users={users}/>
                     </Grid>
                     <Grid item sm={5}>
-                        <EditPanel users={users}/>
+                        <EditPanelObserver users={users}/>
                     </Grid>
                 </Grid>
             </Container>
